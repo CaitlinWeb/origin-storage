@@ -11,7 +11,8 @@
     "build": "yarn clean && tsc --skipLibCheck && yarn build:prod && yarn build:dev",
     "build:prod": "NODE_ENV=production rollup --config --bundleConfigAsCjs",
     "build:dev": "NODE_ENV=development rollup --config --bundleConfigAsCjs",
-    "commit": "yarn git-cz"
+    "commit": "yarn git-cz",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
