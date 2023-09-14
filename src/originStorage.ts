@@ -50,6 +50,7 @@ export class OriginStorage
     }
     const config = await this.emit('connect');
     this._localforage = localforage.createInstance(config);
+    await this.emit('ready')
   }
 
   @listen

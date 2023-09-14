@@ -13,7 +13,8 @@ export class OriginStorageClient
   extends IFrameTransport.Main<{ emit: ClientToStorage }>
   implements StorageToClient, IOriginStorageClient
 {
-  protected _connect?: () => void;
+  protected _connect: () => void;
+  protected _readyCb?: () => void;
   protected _isConnect: boolean;
   protected _storageOptions?: LocalForageOptions;
   protected _change?: (data: IChangeData) => void;
@@ -29,12 +30,17 @@ export class OriginStorageClient
       ...options,
     });
     this._uri = uri;
+    this._connect = function(){};
     this._isConnect = false;
     this._storageOptions = storageOptions;
   }
 
   onConnect(callback: () => void) {
     this._connect = callback;
+  }
+
+  onReady(callback: () => void) {
+    this._readyCb = callback;
   }
 
   async onChange(callback: (data: IChangeData) => void) {
@@ -68,8 +74,13 @@ export class OriginStorageClient
       }
     }
     this._connect?.();
-    this._isConnect = true;
     return this._storageOptions!;
+  }
+
+  @listen
+  async ready() {
+    this._isConnect = true;
+    this._readyCb?.();
   }
 
   async getItem(key: string) {
